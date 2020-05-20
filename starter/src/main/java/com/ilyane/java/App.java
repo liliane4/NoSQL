@@ -4,6 +4,7 @@
 package com.ilyane.java;
 
 import java.util.Arrays;
+import java.util.Scanner;
 
 import org.bson.Document;
 
@@ -13,6 +14,7 @@ import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.MongoIterable;
 import com.mongodb.client.MongoCollection;
 
 public class App {
@@ -69,19 +71,91 @@ public class App {
             }
         }
         
+        MongoClient mongoClient = getMongoClient(host, port);
         
+        MongoDatabase database = mongoClient.getDatabase("database");
+        
+        MongoIterable <String> collections = database.listCollectionNames();
+        
+        for (String collectionNames: collections)
+        {
+            System.out.println(collectionNames);
+        }
+        
+        boolean choose = false;
+        
+        String chooseCollection = "";
+        
+    	Scanner sc = new Scanner(System.in);
+    	
+    	while(!choose)
+        {
+            System.out.println("Choisir une collection, ou mettre 'fin' :");
+            chooseCollection = sc.nextLine();
+            
+            for (String collectionNames: collections)
+            {
+                if(chooseCollection.equals(collectionNames))
+                {
+                    System.out.println("Choisi : " + chooseCollection);
+                    choose = true;
+                }
+                else if(chooseCollection.equals("fin"))
+                {
+                	System.out.println("fin");
+                	choose = true;
+                }
+                else
+                {
+                	System.out.println("Vous ne pouvez pas choisir de collection.");
+                	choose = false;
+                }
+            }
+        }
+        
+    	MongoCollection<Document> collection = database.getCollection(chooseCollection);
+        
+    	choose = false;
+    	
+    	while(!choose)
+        {
+            System.out.println("Taper 'rechercher un document', ou 'insérer un document', ou 'fin'.");
+             String choix = sc.nextLine();
+            
+            	if(choix.equals("rechercher un document"))
+                {
+                    System.out.println("Choisi de rechercher un document");
+                    choose = true;
+                }
+                else if(chooseCollection.equals("insérer un document"))
+                {
+                	System.out.println("Choisi d'insérer un document");
+                	choose = true;
+                }
+                else if(chooseCollection.equals("fin"))
+                {
+                	System.out.println("fin");
+                	choose = true;
+                }
+                else
+                {
+                	System.out.println("Choix n'existe pas.");
+                	choose = false;
+                } 
+
+        }
+    }
+    	
         public static MongoClient getMongoClient(final String host, final int port)
+        {
         MongoClient mongoClient = MongoClients.create(
                 MongoClientSettings.builder()
                         .applyToClusterSettings(builder ->
                                 builder.hosts(Arrays.asList(new ServerAddress(host, port))))
                         .build());
         return mongoClient;
-       
-        //MongoClient mongoClient = MongoClients.create();
-    	//MongoClient mongoClient = MongoClients.create("mongodb://hostOne:27017");
-    	//MongoDatabase database = mongoClient.getDatabase("database");
-    	//MongoCollection<Document> collection = database.getCollection("test");
+     
+    	
     	 
     }
-}
+} 
