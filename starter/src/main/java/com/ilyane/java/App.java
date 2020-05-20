@@ -34,7 +34,7 @@ public class App {
         	{
                 if (i + 1 < args.length && !args[i + 1].startsWith("--"))
                 {
-                  String database = args[i+1];
+                  database = args[i+1];
                 }
                 else
                 {
@@ -59,6 +59,7 @@ public class App {
                 if (i + 1 < args.length && !args[i + 1].startsWith("--"))
                 {
                 	String portString = args[i+1];
+                	port = Integer.parseInt(portString);
                 	
                 }
                 else
@@ -67,17 +68,20 @@ public class App {
                 }
             }
         }
-    	
+        
+        
+        public static MongoClient getMongoClient(final String host, final int port)
         MongoClient mongoClient = MongoClients.create(
                 MongoClientSettings.builder()
                         .applyToClusterSettings(builder ->
-                                builder.hosts(Arrays.asList(new ServerAddress("hostOne", 27017))))
+                                builder.hosts(Arrays.asList(new ServerAddress(host, port))))
                         .build());
+        return mongoClient;
        
         //MongoClient mongoClient = MongoClients.create();
     	//MongoClient mongoClient = MongoClients.create("mongodb://hostOne:27017");
-    	MongoDatabase database = mongoClient.getDatabase("database");
-    	MongoCollection<Document> collection = database.getCollection("test");
+    	//MongoDatabase database = mongoClient.getDatabase("database");
+    	//MongoCollection<Document> collection = database.getCollection("test");
     	 
     }
 }
