@@ -23,6 +23,10 @@ public class App {
 
     public static void main(String[] args) {  
         System.out.println(new App().getGreeting());
+        
+        String database = "";
+        String host = "";
+        int port = 0;
     	
         for(int i = 0 ; i < args.length ; i++)
         {
@@ -35,6 +39,31 @@ public class App {
                 else
                 {
                   throw new Exception("--db not defined");
+                }
+            }
+        	
+        	if (args[i].equals("--host"))
+        	{
+                if (i + 1 < args.length && !args[i + 1].startsWith("--"))
+                {
+                	host = args[i+1];
+                }
+                else
+                {
+                	throw new Exception("--host not defined");
+                }
+            }
+        	
+        	if (args[i].equals("--port"))
+        	{
+                if (i + 1 < args.length && !args[i + 1].startsWith("--"))
+                {
+                	String portString = args[i+1];
+                	
+                }
+                else
+                {
+                	throw new Exception("--port not defined");
                 }
             }
         }
