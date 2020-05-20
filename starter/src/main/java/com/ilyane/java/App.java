@@ -3,7 +3,13 @@
  */
 package com.ilyane.java;
 
-import com.mongodb.ConnectionString;
+import java.util.Arrays;
+
+import org.bson.Document;
+
+//import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
@@ -33,7 +39,13 @@ public class App {
             }
         }
     	
-        MongoClient mongoClient = MongoClients.create();
+        MongoClient mongoClient = MongoClients.create(
+                MongoClientSettings.builder()
+                        .applyToClusterSettings(builder ->
+                                builder.hosts(Arrays.asList(new ServerAddress("hostOne", 27017))))
+                        .build());
+       
+        //MongoClient mongoClient = MongoClients.create();
     	//MongoClient mongoClient = MongoClients.create("mongodb://hostOne:27017");
     	MongoDatabase database = mongoClient.getDatabase("database");
     	MongoCollection<Document> collection = database.getCollection("test");
