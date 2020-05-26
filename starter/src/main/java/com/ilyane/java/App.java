@@ -3,14 +3,18 @@
  */
 package com.ilyane.java;
 
+import java.awt.Menu;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
 import org.bson.Document;
 
+import com.mongodb.BasicDBObject;
 //import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.ServerAddress;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
@@ -158,4 +162,136 @@ public class App {
     	
     	 
     }
+        
+        
+        public void searchDocument(MongoCollection<Document> collection)
+    	{
+    		FindIterable<Document> documents = collection.find();
+    		ArrayList<String> availableKeys = new ArrayList<>();;
+    		
+    		for(Document doc : documents)
+    		{
+    			for(String key : doc.keySet())
+    			{
+    				if(availableKeys.contains(key))
+    				{
+    					availableKeys.add(key);
+    					System.out.println(key);
+    				}
+    			}
+    		}
+    		
+    		Scanner sc = new Scanner(System.in);
+    		
+    		boolean choose = false;
+    		String chooseField = "";
+    		
+    		while(!choose)
+            {
+    			chooseField = sc.nextLine();
+
+    			if(availableKeys.contains(chooseField))
+    			{
+    				System.out.printf("Vous avez choisi %s.", chooseField);
+    				choose = true;
+    			}
+    			else
+    			{
+    				System.out.println("Le champ choisi n'existe pas. Veuillez réessayer.");
+    				choose = false;
+    			}
+            }
+    		
+    		choose = false;
+    		String chooseOperators = "";
+    		
+    		String operators [] = {"inf", "inf egal", "sup", "sup egal", "egal", "true", "false"};
+    		
+    		System.out.println("Veuillez choisir un opérateur parmis ceux ci-dessous :");
+    		
+    		for(int i = 0 ; i < operators.length ; i++)
+    		{
+    			System.out.printf("%s \n", operators[i]);
+    		}
+    		
+        	chooseOperators = sc.nextLine();
+        	
+        	String Operators = "";
+        	
+        			if(chooseOperators.equals("inf"))
+        	    	{
+        	    		Operators = "$lt";
+        	    	}
+        	    	
+        	    	if(chooseOperators.equals("inf egal"))
+        	    	{
+        	    		Operators = "$lte";
+        	    	}
+        	    	
+        	    	if(chooseOperators.equals("sup"))
+        	    	{
+        	    		Operators = "$gt";
+        	    	}
+        	    	
+        	    	if(chooseOperators.equals("sup egal"))
+        	    	{
+        	    		Operators = "$gte";
+        	    	}
+        	 
+        	System.out.println("Quelle est la valeur avec laquelle vous souhaitez comparer ?");
+        	
+        	String Compare = "";
+        	
+        	BasicDBObject query = null;
+	    	
+        	if(!operators.equals("egal") || !operators.equals("true") || !operators.equals("false"))
+        	{
+        		query = new BasicDBObject(chooseField,
+                        new BasicDBObject(operators, compare));
+        	}
+        	else
+        	{
+        		if(operators.equals("egal"))
+        		{
+        			
+        		}
+        		else if(operators.equals("true"))
+        		{
+        			
+        		}
+        		else if(operators.equals("false"))
+        		{
+        			
+        		}
+        	}
+        	
+        	FindIterable<Document> resultats = collection.find(query);
+        	
+        	System.out.println("Recherche en cours...");
+        	
+        	for(Document result : resultats)
+    		{
+    			System.out.println(resultats);
+    			
+    		}
+
+        }
+    	
+    	public void insertDocument(MongoCollection<Document> collection)
+    	{
+    		FindIterable<Document> documents = collection.find();
+    		ArrayList<String> availableKeys = new ArrayList<>();;
+    		
+            
+    		String insert = "Insert";
+
+            for(Document doc : documents)
+            	
+            	if (result.equals(insert)) {
+                insertDocument(collection);
+            } 		else if (insertDocument("Continue to insert ?").equals("yes")) {
+                    insertDocument(collection);
+                }  
+        	
+        }
 } 
