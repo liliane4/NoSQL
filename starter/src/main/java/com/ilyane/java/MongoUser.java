@@ -176,19 +176,13 @@ public void searchDocument(MongoCollection<Document> collection)
 	    		Operators = "$gte";
 	    	}
 	    	
-	    	if(chooseOperators.equals("egal"))
+	    	if(chooseOperators.equals("boolean"))
 	    	{
 	    		operators = "$eq";
 	    	}
-	    	
-	    	if(chooseOperators.equals("boolean egal"))
+	    	if(chooseOperators.equals("boolean"))
 	    	{
-	    		operators = "=";
-	    	}
-	    	
-	    	if(chooseOperators.equals("boolean non egal"))
-	    	{
-	    		operators = "!=";
+	    		operators = "$ne";
 	    	}
 	 
 	System.out.println("Quelle est la valeur avec laquelle vous souhaitez comparer ?");
