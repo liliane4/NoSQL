@@ -181,12 +181,12 @@ public void searchDocument(MongoCollection<Document> collection)
 	    		operators = "$eq";
 	    	}
 	    	
-	    	if(chooseOperators.equals("bool egal"))
+	    	if(chooseOperators.equals("boolean egal"))
 	    	{
 	    		operators = "=";
 	    	}
 	    	
-	    	if(chooseOperators.equals("bool non egal"))
+	    	if(chooseOperators.equals("boolean non egal"))
 	    	{
 	    		operators = "!=";
 	    	}
