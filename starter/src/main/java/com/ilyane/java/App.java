@@ -11,7 +11,6 @@ import java.util.Scanner;
 import org.bson.Document;
 
 import com.mongodb.BasicDBObject;
-//import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.FindIterable;
@@ -27,10 +26,9 @@ public class App {
        return "Hello world.";
     } 
 
-    public static void main(String[] args) {  
+    public static void main(String[] args) throws Exception {  
         System.out.println(new App().getGreeting());
         
-        String database = "";
         String host = "";
         int port = 0;
     	
@@ -40,7 +38,6 @@ public class App {
         	{
                 if (i + 1 < args.length && !args[i + 1].startsWith("--"))
                 {
-                  database = args[i+1];
                 }
                 else
                 {
@@ -77,9 +74,9 @@ public class App {
         
         MongoClient mongoClient = getMongoClient(host, port);
         
-        MongoDatabase database = mongoClient.getDatabase("database");
+        MongoDatabase database1 = mongoClient.getDatabase("database");
         
-        MongoIterable <String> collections = database.listCollectionNames();
+        MongoIterable <String> collections = database1.listCollectionNames();
         
         for (String collectionNames: collections)
         {
@@ -117,7 +114,7 @@ public class App {
             }
         }
         
-    	MongoCollection<Document> collection = database.getCollection(chooseCollection);
+    	MongoCollection<Document> collection = database1.getCollection(chooseCollection);
         
     	choose = false;
     	

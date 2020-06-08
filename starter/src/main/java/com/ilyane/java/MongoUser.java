@@ -7,6 +7,7 @@ import java.util.Scanner;
 
 import org.bson.BsonDocument;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClientSettings;
@@ -16,6 +17,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoIterable;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.MongoCollection;
 
 
@@ -154,35 +156,35 @@ public void searchDocument(MongoCollection<Document> collection)
 	
 	chooseOperators = sc.nextLine();
 	
-	String Operators = "";
+	String operatores = "";
 	
 			if(chooseOperators.equals("inf"))
 	    	{
-	    		Operators = "$lt";
+	    		operatores = "$lt";
 	    	}
 	    	
 	    	if(chooseOperators.equals("inf egal"))
 	    	{
-	    		Operators = "$lte";
+	    		operatores = "$lte";
 	    	}
 	    	
 	    	if(chooseOperators.equals("sup"))
 	    	{
-	    		Operators = "$gt";
+	    		operatores = "$gt";
 	    	}
 	    	
 	    	if(chooseOperators.equals("sup egal"))
 	    	{
-	    		Operators = "$gte";
+	    		operatores = "$gte";
 	    	}
 	    	
 	    	if(chooseOperators.equals("boolean"))
 	    	{
-	    		operators = "$eq";
+	    		operatores = "$eq";
 	    	}
 	    	if(chooseOperators.equals("boolean"))
 	    	{
-	    		operators = "$ne";
+	    		operatores = "$ne";
 	    	}
 	 
 	System.out.println("Quelle est la valeur avec laquelle vous souhaitez comparer ?");
@@ -191,7 +193,7 @@ public void searchDocument(MongoCollection<Document> collection)
 	
 	BasicDBObject query = null;
 	
-	if(!operators.equals("egal") || !operators.equals("true") || !operators.equals("false"))
+/*	if(!operators.equals("egal") || !operators.equals("true") || !operators.equals("false"))
 	{
 		query = new BasicDBObject(chooseField,
                 new BasicDBObject(operators, Compare));
@@ -210,7 +212,7 @@ public void searchDocument(MongoCollection<Document> collection)
 		{
 			
 		}
-	}
+	} */
 	
 	Class<?> cls = null;
     try
@@ -224,6 +226,7 @@ public void searchDocument(MongoCollection<Document> collection)
     }
     
 	BsonDocument query = null;
+	Bson filter = getFilter(field, cls);
 	    	
 	if(cls == String.class)
 	{
@@ -251,6 +254,193 @@ public void searchDocument(MongoCollection<Document> collection)
 	}
 
 }
+
+public void Operation(String collection, FindIterable<Document> documentsFound) {
+    
+	ArrayList<String> menu = new ArrayList<String>(){
+		{
+	        add("Delete All selected documents");
+	        add("Delete One document selected");
+	        add("Update all documents selected");
+	        add("Update One document selected");
+		}
+	};
+
+    Integer resultat;
+
+    long numberChange = 0;
+
+    switch (resultat) {
+        
+    	case 1:
+            numberChange = Mongo.deleteDocument(collection, documentsFound);
+            System.out.println( numberChange + " document deleted.");
+            break;
+        
+    	case 2:
+            ArrayList<String> StringItem = new ArrayList<>();
+            documentsFound.forEach(x -> { StringItem.add(x.toJson()); 
+            });
+
+            String itemDelete = Mongo.numberMongoUser(StringItem, "What document do you want to delete ?");
+            numberChange = Mongo.deleteDocument(collection, Document.parse(itemDelete));
+            System.out.println( numberChange + " document deleted.");
+            break;
+        
+    	case 3:
+    		String itemToUpdate = Menu.numberMenuUser(listStringItem, "Which document do you want to update ?");
+            documentToUpdate = Document.parse(itemToUpdate);
+            break;
+        case 4:
+        	String fieldToUpdate = Menu.numberMenuUser(mongos.getFields(collection), "Which field do you want to update ?");
+            String value = Menu.numberMenuUser(mongos.getFields(collection), "Which value ?");
+            break;
+            
+            Document filter = new Document();
+            filter.append("$set", 33);
+            
+
+            if (documentToUpdate != null)
+            {
+                numberItemsChange = mongos.updateDocument(collection, documentToUpdate, null);
+            } else {
+                numberItemsChange = mongos.updateDocument(collection, documentsFound,null);
+            }
+
+            System.out.println( numberItemsChange + " documents updated.");
+            break;
+        case 0:
+        default:
+            break;
+    }
+}
+
+public Bson searchString(String field)
+{
+    ArrayList<String> operators = new ArrayList<String>() {{
+        add("$eq"); add("$ne");
+    }};
+
+    String operator = Menu.numberMenuUser(operators, "Which operator do you want to use ?");
+    String value = ScannerSingleton.getInstance().getInputString("Insert value");
+    value = ScannerSingleton.getInstance().getInput();
+
+    Bson filter;
+    switch (operator) {
+        case "$eq":
+            filter = Filters.eq(field, value);
+            break;
+        case "$ne":
+            filter = Filters.ne(field, value);
+            break;
+        default:
+            filter = null;
+            break;
+    }
+
+    return filter;
+}
+
+public Bson searchInteger(String field)
+{
+    ArrayList<String> operators = new ArrayList<String>() {{
+        add("$eq"); add("$ne"); add("$in"); add("$lt"); add("$lte"); add("$gt"); add("$gte");
+    }};
+
+    String operator = Menu.numberMenuUser(operators, "Which operator do you want to use ?");
+    Integer value = ScannerSingleton.getInstance().getInputNumber("Insert value");
+
+    Bson filter = null;
+
+    switch (operator) {
+        case "$eq":
+            filter = Filters.eq(field, value);
+            break;
+        case "$ne":
+            filter = Filters.ne(field, value);
+            break;
+        case "$in":
+            filter = Filters.in(field, value);
+            break;
+        case "$lt":
+            filter = Filters.lt(field, value);
+            break;
+        case "$lte":
+            filter = Filters.lte(field, value);
+            break;
+        case "$gt":
+            filter = Filters.gt(field, value);
+            break;
+        case "$gte":
+            filter = Filters.gte(field, value);
+            break;
+    }
+
+    return filter;
+}
+
+public Bson searchDouble(String field)
+{
+    ArrayList<String> operators = new ArrayList<String>() {{
+        add("$eq"); add("$ne"); add("$in"); add("$lt"); add("$lte"); add("$gt"); add("$gte");
+    }};
+
+    String operator = Menu.numberMenuUser(operators, "Which operator do you want to use ?");
+    Double value = ScannerSingleton.getInstance().getInputDouble("Insert value");
+
+    Bson filter = null;
+
+    switch (operator) {
+        case "$eq":
+            filter = Filters.eq(field, value);
+            break;
+        case "$ne":
+            filter = Filters.ne(field, value);
+            break;
+        case "$in":
+            filter = Filters.in(field, value);
+            break;
+        case "$lt":
+            filter = Filters.lt(field, value);
+            break;
+        case "$lte":
+            filter = Filters.lte(field, value);
+            break;
+        case "$gt":
+            filter = Filters.gt(field, value);
+            break;
+        case "$gte":
+            filter = Filters.gte(field, value);
+            break;
+    }
+
+    return filter;
+}
+
+private Bson searchBoolean(String field)
+{
+    ArrayList<String> operators = new ArrayList<String>() {{
+        add("$eq"); add("$ne");
+    }};
+
+    String operator = Menu.numberMenuUser(operators, "Which operator do you want to use ?");
+    Boolean value = Boolean.valueOf(ScannerSingleton.getInstance().getInputString("Insert value"));
+    value = Boolean.valueOf(ScannerSingleton.getInstance().getInput());
+
+    Bson filter = null;
+
+    switch (operator) {
+        case "$eq":
+            filter = Filters.eq(field, value);
+            break;
+        case "$ne":
+            filter = Filters.ne(field, value);
+            break;
+    }
+
+    return filter;
+}
+
 
 public void insertDocument(MongoCollection<Document> collection)
 {
